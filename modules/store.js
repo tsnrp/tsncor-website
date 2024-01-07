@@ -263,7 +263,7 @@ export const store = reactive({
         }
         let filteredStardates = this.stardates
             .filter(sd => new Date(sd.start_date_irl) < date) // get only dates that are before our reference date
-            .sort((a, b) => a.stardate_year < b.stardate_year ? 1 : a.stardate_year === b.stardate_year ? 0 : -1); // sort highest first
+            .sort((a, b) => new Date(a.start_date_irl) < new Date(b.start_date_irl) ? 1 : a.start_date_irl === b.start_date_irl ? 0 : -1); // sort highest first
 
         return filteredStardates[0].stardate_year; // get the first (highest) and return it
     },
