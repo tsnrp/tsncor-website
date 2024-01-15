@@ -46,11 +46,6 @@ export async function fetchStardateData() {
     return stardates;
 }
 
-export async function fetchAwardImages() {
-    let awardImages = await fetchWithCache(Config.TSNCOR_IMAGES_URL, Config.LONG_CACHE_DURATION)
-    return awardImages;
-}
-
 export async function resetCache() {
     localStorage.clear();
 }

@@ -24,7 +24,6 @@ export const store = reactive({
     ranks: [],
     stardates: [],
     assignmentRecords: [],
-    awardImages: {},
 
     refreshing: false,
 
@@ -102,9 +101,6 @@ export const store = reactive({
     updateStardates(stardates) {
         this.stardates = stardates;
     },
-    updateAwardImages(awardImages) {
-        this.awardImages = awardImages;
-    },
 
     showOfficers() {
         this.displayTab = "officers";
@@ -140,16 +136,7 @@ export const store = reactive({
         if (path === undefined) {
             return Config.RIBBON_MISSING_FILE;
         }
-        if (Object.keys(this.awardImages).length === 0) {
-            // Award images data has not yet been loaded
-            return Config.RIBBON_LOADING_FILE;
-        }
-        let correctedPath = Object.keys(this.awardImages).find(k => k.toLowerCase() === path.toLowerCase())
-        let id = this.awardImages[correctedPath]
-        if (id === undefined) {
-            return Config.RIBBON_MISSING_FILE;
-        }
-        return `https://drive.google.com/uc?export=view&id=${id}`
+        return `${Config.AWARD_IMAGE_BASE_URL}${encodeURIComponent(path)}`
     },
 
     getOfficerRecordByName(name) {
