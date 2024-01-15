@@ -18,4 +18,3 @@ fetch_with_cache($appsscript_url, $file_path, $cache_seconds);
 
 // This ends the currently running process, so we don't keep hogging server resources.
 die();
-?>

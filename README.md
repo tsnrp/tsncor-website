@@ -15,12 +15,13 @@ You'll want to change the `TSNCOR_DEPLOYMENT_WEB_APP_URL` variable.
 
 ## Code structure
 
-This is a relatively plain "hand-crafted" website with some HTML and CSS.
+This is a relatively plain "hand-crafted" website with some HTML and CSS, and a little PHP.
 You'll find the main structure in `index.html`, and the biggest part of the logic in `modules/store.js`.
 
 There's a very small bit of logic which runs server-side.
 This you'll find in the `api` directory.
 This part is responsible for caching the spreadsheet data, which is necessary since getting the data from the spreadsheet is quite slow.
+It also caches the award ribbon pictures. This is needed for the images to work. Google made a change in early 2024 that made it no longer possible to get the award images directly.
 
 ### Client
 
@@ -47,7 +48,15 @@ There are some more cool features. The important ones are:
 
 There are a few PHP files in `api`. These are responsible for server side caching.
 
-TODO: document how it works.
+The data we display comes from two different sources: The Apps Script (this is attached to the COR spreadsheet and gives us the spreadsheet data) and the Google Drive (This is where the pictures for award ribbons are).
+
+It takes quite long to retrieve data from Google, so we have a cache: we first load the data from Google onto the TSN server, and then from the TSN server to the client.
+
+The `api/cache_function.php` file contains the main logic for fetching a cached file, making sure it isn't expired, and sending it to the client. This function is used by all other PHP scripts.
+
+In `api/appsscript.php` we accept an appsscript query and return the (cached) result from appsscript.
+
+In `api/images.php` we accept a query for an image file, and get the file from Google Drive.
 
 ### Look & Feel
 
