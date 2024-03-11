@@ -295,29 +295,26 @@ export const store = reactive({
         this.refreshing = true;
         this.officersLoading = true;
         this.shipsLoading = true;
-        Api.resetCache();
-        this.init();
+        Api.disableCache();
+        this.init().finally(() => { Api.enableCache() });
     },
 
-    init() {
+    async init() {
         // This will fetch them all in parallel, which is faster.
-        Promise.all([
+        await Promise.all([
             Api.fetchOfficerData()
                 .then(o => this.updateOfficers(o))
-                .then(() => {this.officersLoading = false}),
+                .then(() => { this.officersLoading = false }),
             Api.fetchShipData()
                 .then(s => this.updateShips(s))
-                .then(() => {this.shipsLoading = false}),
+                .then(() => { this.shipsLoading = false }),
             Api.fetchAwardData().then(a => this.updateAwards(a)),
-            Api.fetchAwardRecordData().then(a => this.updateAwardsRecords(a)), 
-            Api.fetchAssignmentRecordData().then(a => this.updateAssignmentRecords(a)),
+            Api.fetchAwardRecordData().then(a_1 => this.updateAwardsRecords(a_1)),
+            Api.fetchAssignmentRecordData().then(a_2 => this.updateAssignmentRecords(a_2)),
             Api.fetchRankData().then(r => this.updateRanks(r)),
-            Api.fetchStardateData().then(r => this.updateStardates(r)),
-            Api.fetchAwardImages().then(r => this.updateAwardImages(r)),
+            Api.fetchStardateData().then(r_1 => this.updateStardates(r_1)),
         ])
-            .then(() => {
-                this.refreshing = false;
-            })
+        this.refreshing = false
     }
 })
 

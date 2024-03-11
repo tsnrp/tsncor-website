@@ -4,64 +4,61 @@
  */
 import * as Config from "../configuration.js"
 
-var cache = undefined;
-try {
-    cache = await caches.open("tsncor");
-}
-catch (exception) {}
+var cacheDisabled = false;
 
 export async function fetchOfficerData() {
-    let officers = await fetchWithCache(Config.TSNCOR_OFFICERS_URL, Config.SHORT_CACHE_DURATION);
+    let url = `${Config.TSNCOR_OFFICERS_URL}&max_age=${cacheDisabled ? "0" : Config.SHORT_CACHE_DURATION_SECONDS.toString()}`
+    let officers = await fetchJson(url);
     return officers;
 }
 
 
 export async function fetchShipData() {
-    let ships = await fetchWithCache(Config.TSNCOR_SHIPS_URL, Config.LONG_CACHE_DURATION);
+    let url = `${Config.TSNCOR_SHIPS_URL}&max_age=${cacheDisabled ? "0" : Config.LONG_CACHE_DURATION_SECONDS.toString()}`
+    let ships = await fetchJson(url);
     return ships;
 }
 
 export async function fetchAwardData() {
-    let awards = await fetchWithCache(Config.TSNCOR_AWARDS_URL, Config.LONG_CACHE_DURATION);
+    let url = `${Config.TSNCOR_AWARDS_URL}&max_age=${cacheDisabled ? "0" : Config.LONG_CACHE_DURATION_SECONDS.toString()}`
+    let awards = await fetchJson(url);
     return awards;
 }
 
 export async function fetchAssignmentRecordData() {
-    let assignmentRecords = await fetchWithCache(Config.TSNCOR_ASSIGNMENTS_RECORDS_URL, Config.SHORT_CACHE_DURATION);
+    let url = `${Config.TSNCOR_ASSIGNMENTS_RECORDS_URL}&max_age=${cacheDisabled ? "0" : Config.SHORT_CACHE_DURATION_SECONDS.toString()}`
+    let assignmentRecords = await fetchJson(url);
     return assignmentRecords;
 }
 
 export async function fetchAwardRecordData() {
-    let awardsRecords = await fetchWithCache(Config.TSNCOR_AWARDS_RECORDS_URL, Config.SHORT_CACHE_DURATION);
+    let url = `${Config.TSNCOR_AWARDS_RECORDS_URL}&max_age=${cacheDisabled ? "0" : Config.SHORT_CACHE_DURATION_SECONDS.toString()}`
+    let awardsRecords = await fetchJson(url);
     return awardsRecords;
 }
 
 export async function fetchRankData() {
-    let ranks = await fetchWithCache(Config.TSNCOR_RANKS_URL, Config.LONG_CACHE_DURATION);
+    let url = `${Config.TSNCOR_RANKS_URL}&max_age=${cacheDisabled ? "0" : Config.LONG_CACHE_DURATION_SECONDS.toString()}`
+    let ranks = await fetchJson(url);
     return ranks;
 }
 
 export async function fetchStardateData() {
-    let stardates = await fetchWithCache(Config.TSNCOR_STARDATES_URL, Config.LONG_CACHE_DURATION);
+    let url = `${Config.TSNCOR_STARDATES_URL}&max_age=${cacheDisabled ? "0" : Config.LONG_CACHE_DURATION_SECONDS.toString()}`
+    let stardates = await fetchJson(url);
     return stardates;
 }
 
-export async function resetCache() {
+export async function disableCache() {
     localStorage.clear();
+    cacheDisabled = true;
 }
 
-async function fetchWithCache(url, cacheDuration) {
-    let lastCached = localStorage.getItem(url)
-    if (!cache || lastCached < Date.now() - cacheDuration) {
-        let res = await fetch(url, {redirect: "follow"})
-        if (!!cache) {
-            await cache.put(url, res);
-        }
-        else {
-            return await res.json();
-        }
-        localStorage.setItem(url, Date.now())
-    }
-    let res = await cache.match(url);
+export async function enableCache() {
+    cacheDisabled = false;
+}
+
+async function fetchJson(url) {
+    let res = await fetch(url);
     return await res.json()
 }
